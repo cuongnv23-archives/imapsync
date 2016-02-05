@@ -46,4 +46,4 @@
 
 #### 3. License
 
-See [LICENSE](../blob/master/README.md)
+See [LICENSE](../blob/master/LICENSE)
