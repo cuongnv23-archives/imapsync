@@ -46,4 +46,4 @@
 
 #### 3. License
 
-See [LICENSE](../blob/master/LICENSE)
+See [LICENSE](../master/LICENSE)
