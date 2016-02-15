@@ -17,8 +17,9 @@ DEFAULT_USERLIST="users.txt"
 
 function usage() {
 
-	echo "Usage: $0 -h [help] -d [domain_name] -S [exchange_server] -D [cyrus_server] -u [auth_user] -p [auth_pass] -i [input_file]"
+	echo "Usage: $0 -h [help] -d [domain_name] -S [exchange_server] -D [cyrus_server] -u [auth_user] -p [auth_pass] -i [input_file] -b [buffer_size]"
 	echo ""
+	echo "-h: help."
 	echo "-S: MANDATORY. IP or hostname of exchange server."
 	echo "-D: MANDATORY. IP or hostname of cyrus server."
 	echo "-u: MANDATORY. User which has full access to other users' mailbox."
