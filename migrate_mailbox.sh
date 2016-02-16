@@ -10,6 +10,7 @@
 LOG_FAILED="/var/log/imapsync/fails.log"
 LOG_DIR="/var/log/imapsync"
 
+#set default values
 DEFAULT_BUFFERSIZE="49152000"
 DEFAULT_USERLIST="users.txt"
 
@@ -22,7 +23,7 @@ function usage() {
 	echo "-h: help."
 	echo "-S: MANDATORY. IP or hostname of exchange server."
 	echo "-D: MANDATORY. IP or hostname of cyrus server."
-	echo "-u: MANDATORY. User which has full access to other users' mailbox."
+	echo "-u: MANDATORY. User which has full access to other users' mailbox (WITHOUT @domain part)."
 	echo "-p: MANDATORY. Password of migration user."
 	echo "-d: MANDATORY. Domain name of email users."
 	echo "-i: file contains list of users. Default is ./users.txt"
@@ -30,6 +31,14 @@ function usage() {
 
 
 }
+
+check_imapsync() {
+	if [ ! -f /usr/bin/imapsync ]; then
+		echo "imapsync is not installed."
+		exit 1
+	fi
+}
+
 
 # Check input parameters and set default values
 
@@ -63,7 +72,7 @@ defaults() {
 
 
 while getopts ":h:S:D:u:p:i:b:d:" opt; do
-	case $opt in
+	case ${opt} in
 		h)
 			usage && exit 1
 			;;
@@ -102,7 +111,16 @@ if [ ! -d ${LOG_DIR} ]; then
 	mkdir ${LOG_DIR}
 fi
 
+# check if imapsync installed
+check_imapsync
+# set default values
 defaults
+
+# start time
+
+date=$(date '+%d-%m-%Y at %H:%M:%S')
+timestamp=$(date '+%Y%m%d%H%M%S')
+date_exec_deb=$(date '+%s')
 
 while read email passwd
 do
@@ -121,7 +139,7 @@ do
 	--user1 ${email} \
 	--password1 "${MIG_PWD}" \
 	--authmech1 "PLAIN" \
-	--host2 ${DST_SRV} --user2  ${email} \
+	--host2 ${DST_SRV} --user2  "${email}" \
 	--ssl1 --subscribeall \
 	--authmech2 "PLAIN" \
 	--password2 "${passwd}" > ${LOG_FILE}
@@ -133,7 +151,16 @@ do
 
 done < ${USER_LIST}
 
+# finish time
+date_exec_fin=$(date '+%s')
+date_exec=$((${date_exec_fin} - ${date_exec_deb}))
+h=$((${date_exec}/3600))
+m=$((${date_exec}%3600/60))
+s=$((${date_exec}%60))
+
 if [ -f ${LOG_FAILED} ]; then
 	fails=`cat ${LOG_FAILED} | wc -l`
 	echo "Mailboxes of ${fails} emails not migrated!"
 fi
+
+echo "The synchronization took $h hours, $m minutes and $s seconds"
