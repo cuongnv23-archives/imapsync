@@ -32,7 +32,7 @@ function usage() {
 
 }
 
-check_imapsync() {
+function check_imapsync() {
 	if [ ! -f /usr/bin/imapsync ]; then
 		echo "imapsync is not installed."
 		exit 1
@@ -42,7 +42,7 @@ check_imapsync() {
 
 # Check input parameters and set default values
 
-defaults() {
+function defaults() {
 
 	if [ -z ${SRC_SRV} ]; then
 		echo "Invalid input! No source server specified!"
